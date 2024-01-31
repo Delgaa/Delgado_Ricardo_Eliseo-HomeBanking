@@ -26,9 +26,11 @@ public class HomeBankingApplication {
 			clientRepository.save(melba);
 			Account accountMelba1 = new Account("VIN001", LocalDate.now(), 5000.00, melba);
 			melba.addAccount(accountMelba1);
+			accountRepository.save(accountMelba1);
 			Account accountMelba2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500.00, melba);
 			melba.addAccount(accountMelba2);
-			accountRepository.saveAll(melba.getAccounts());
+			accountRepository.save(accountMelba2);
+
 
 			System.out.println(melba);
 
@@ -36,9 +38,11 @@ public class HomeBankingApplication {
 			clientRepository.save(clientYo);
 			Account accountYo = new Account("VIN003", LocalDate.now(), 7000.00, clientYo);
 			clientYo.addAccount(accountYo);
+			accountRepository.save(accountYo);
 			Account accountYo2  = new Account("VIN004", LocalDate.now().plusDays(1), 500.00, clientYo);
 			clientYo.addAccount(accountYo2);
-			accountRepository.saveAll(clientYo.getAccounts());
+			accountRepository.save(accountYo2);
+
 
 			System.out.println(clientYo);
 		};
