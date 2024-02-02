@@ -30,6 +30,6 @@ public class ClientController {
     public ResponseEntity<?> getClientById(@PathVariable Long id){
         Client client = clientRepository.findById(id).orElse(null);
 
-        return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not exists");
+        return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
     }
 }
