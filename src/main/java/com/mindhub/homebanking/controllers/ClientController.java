@@ -29,10 +29,7 @@ public class ClientController {
     @GetMapping("/{id}")
     public ResponseEntity<ClientDTO> getClientById(@PathVariable Long id){
         Client client = clientRepository.findById(id).orElse(null);
-        if (client != null){
-            ClientDTO clientDTO = new ClientDTO(client);
-            return new ResponseEntity<>(clientDTO, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }
