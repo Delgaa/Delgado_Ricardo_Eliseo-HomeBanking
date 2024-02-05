@@ -8,38 +8,50 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private TransactionType transactionType;
-    private LocalDateTime transactionTime;
+    private TransactionType type;
+    private String detail;
+    private LocalDateTime date;
     private Double amount;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 
-    public Transaction(TransactionType transactionType, LocalDateTime transactionTime, Double amount, Account account) {
-        this.transactionType = transactionType;
-        this.transactionTime = transactionTime;
+    public Transaction(TransactionType type, String detail, LocalDateTime transactionTime, Double amount) {
+        this.type = type;
+        this.detail = detail;
+        this.date = transactionTime;
         this.amount = amount;
-        this.account = account;
+    }
+
+    public Transaction() {
     }
 
     public Long getId() {
         return id;
     }
 
-    public TransactionType getTransactionType() {
-        return transactionType;
+    public TransactionType getType() {
+        return type;
     }
 
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 
-    public LocalDateTime getTransactionTime() {
-        return transactionTime;
+    public String getDetail() {
+        return detail;
     }
 
-    public void setTransactionTime(LocalDateTime transactionTime) {
-        this.transactionTime = transactionTime;
+    public void setDetail(String details) {
+        this.detail = details;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Double getAmount() {
@@ -62,8 +74,9 @@ public class Transaction {
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", transactionType=" + transactionType +
-                ", transactionTime=" + transactionTime +
+                ", type=" + type +
+                ", detail='" + detail + '\'' +
+                ", transactionTime=" + date +
                 ", amount=" + amount +
                 '}';
     }
