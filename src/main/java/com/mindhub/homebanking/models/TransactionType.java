@@ -1,2 +1,6 @@
-package com.mindhub.homebanking.models;public class TransactionType {
+package com.mindhub.homebanking.models;
+
+public enum TransactionType {
+    CREDIT,
+    DEBIT
 }
