@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/client/accounts")
+@RequestMapping("/api/accounts")
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
