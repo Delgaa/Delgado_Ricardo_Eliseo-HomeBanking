@@ -1,2 +1,4 @@
-package com.mindhub.homebanking.dtos;public class TransactionDTO {
+package com.mindhub.homebanking.dtos;
+
+public class TransactionDTO {
 }
