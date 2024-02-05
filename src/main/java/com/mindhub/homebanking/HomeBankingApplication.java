@@ -24,10 +24,10 @@ public class HomeBankingApplication {
 
 			Client melba = new Client("Melba","Morel","melba@mindhub.com");
 			clientRepository.save(melba);
-			Account accountMelba1 = new Account("VIN001", LocalDate.now(), 5000.00, melba);
+			Account accountMelba1 = new Account("VIN001", LocalDate.now(), 5000.00);
 			melba.addAccount(accountMelba1);
 			accountRepository.save(accountMelba1);
-			Account accountMelba2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500.00, melba);
+			Account accountMelba2 = new Account("VIN002", LocalDate.now().plusDays(1), 7500.00);
 			melba.addAccount(accountMelba2);
 			accountRepository.save(accountMelba2);
 
@@ -36,10 +36,10 @@ public class HomeBankingApplication {
 
 			Client clientYo = new Client("Ricardo", "Delgado", "delgadoricardoeliseo@gmail.com");
 			clientRepository.save(clientYo);
-			Account accountYo = new Account("VIN003", LocalDate.now(), 7000.00, clientYo);
+			Account accountYo = new Account("VIN003", LocalDate.now(), 7000.00);
 			clientYo.addAccount(accountYo);
 			accountRepository.save(accountYo);
-			Account accountYo2  = new Account("VIN004", LocalDate.now().plusDays(1), 500.00, clientYo);
+			Account accountYo2  = new Account("VIN004", LocalDate.now().plusDays(1), 500.00);
 			clientYo.addAccount(accountYo2);
 			accountRepository.save(accountYo2);
 
