@@ -46,6 +46,7 @@ public class HomeBankingApplication {
 			accountMelba2.addTransaction(buyHeadphones);
 			transactionRepository.save(buyHeadphones);
 
+			clientRepository.save(melba);
 
 			System.out.println(melba);
 
@@ -69,6 +70,7 @@ public class HomeBankingApplication {
 			accountYo2.addTransaction(refund);
 			transactionRepository.save(refund);
 
+			clientRepository.save(clientYo);
 
 			System.out.println(clientYo);
 		};
