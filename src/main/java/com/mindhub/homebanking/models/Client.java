@@ -21,6 +21,9 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<ClientLoan> loans = new ArrayList<>();
 
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private  Set<Card> cards = new HashSet<>();
+
     public Client(String name, String lastName, String email) {
         this.name = name;
         this.lastName = lastName;
@@ -62,8 +65,24 @@ public class Client {
         return accounts;
     }
 
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
+    }
+
     public List<ClientLoan> getLoans() {
         return loans;
+    }
+
+    public void setLoans(List<ClientLoan> loans) {
+        this.loans = loans;
+    }
+
+    public Set<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(Set<Card> cards) {
+        this.cards = cards;
     }
 
     public void addAccount(Account account){
@@ -74,7 +93,10 @@ public class Client {
     public void addClientLoan(ClientLoan clientLoan) {
         clientLoan.setClient(this);
         loans.add(clientLoan);
-
+    }
+    public void addCards(Card card) {
+        card.setClient(this);
+        cards.add(card);
     }
 
     @Override
