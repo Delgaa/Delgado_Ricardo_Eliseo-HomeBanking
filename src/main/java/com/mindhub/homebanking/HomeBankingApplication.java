@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import static com.mindhub.homebanking.models.TransactionType.*;
 
-
 @SpringBootApplication
 public class HomeBankingApplication {
 
@@ -20,7 +19,7 @@ public class HomeBankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository){
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return args -> {
 
 			Client melba = new Client("Melba","Morel","melba@mindhub.com");
@@ -44,8 +43,7 @@ public class HomeBankingApplication {
 			transactionRepository.save(buyHeadphones);
 
 			clientRepository.save(melba);
-
-			System.out.println(melba);
+			
 
 			Client clientYo = new Client("Ricardo", "Delgado", "delgadoricardoeliseo@gmail.com");
 			clientRepository.save(clientYo);
@@ -107,7 +105,23 @@ public class HomeBankingApplication {
 			clientLoanRepository.save(loan3);
 			clientLoanRepository.save(loan4);
 
-			System.out.println(clientYo);
+			Card cardMelba = new Card(melba.getName() +" "+ melba.getLastName(), CardType.DEBIT,CardColor.GOLD,"3453-4532-6432-4353",344,LocalDate.now().plusYears(5), LocalDate.now());
+			Card cardMelba2 = new Card(melba.getName() +" "+ melba.getLastName(), CardType.CREDIT,CardColor.TITANIUM,"4532-2326-6242-5632",454,LocalDate.now().plusYears(5), LocalDate.now());
+			Card cardClientYo = new Card(clientYo.getName() +" "+ clientYo.getLastName(), CardType.CREDIT,CardColor.SILVER,"2344-5412-3643-4633",677,LocalDate.now().plusYears(5), LocalDate.now());
+			cardRepository.save(cardMelba);
+			cardRepository.save(cardMelba2);
+			cardRepository.save(cardClientYo);
+
+			melba.addCards(cardMelba);
+			melba.addCards(cardMelba2);
+			clientRepository.save(melba);
+			clientYo.addCards(cardClientYo);
+			clientRepository.save(clientYo);
+
+			cardRepository.save(cardMelba);
+			cardRepository.save(cardMelba2);
+			cardRepository.save(cardClientYo);
+
 		};
 	}
 }
