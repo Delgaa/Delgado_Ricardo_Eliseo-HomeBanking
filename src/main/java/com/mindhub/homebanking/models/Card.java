@@ -28,8 +28,8 @@ public class Card {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    public Card(String cardHolder, CardType type, CardColor color, String number, int cvv, LocalDate thruDate, LocalDate fromDate) {
-        this.cardHolder = cardHolder;
+    public Card(Client client, CardType type, CardColor color, String number, int cvv, LocalDate thruDate, LocalDate fromDate) {
+        this.cardHolder = client.getName() + " " + client.getLastName();
         this.type = type;
         this.color = color;
         this.number = number;
