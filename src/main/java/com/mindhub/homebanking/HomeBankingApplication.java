@@ -105,7 +105,7 @@ public class HomeBankingApplication {
 			clientLoanRepository.save(loan3);
 			clientLoanRepository.save(loan4);
 
-			Card cardMelba = new Card(melba, CardType.DEBIT,CardColor.GOLD,"3453-4532-6432-4353",344,LocalDate.now().plusYears(5), LocalDate.now());
+			Card cardMelba = new Card(melba, CardType.DEBIT,CardColor.GOLD,"2683-4563-4565-6434",344,LocalDate.now().plusYears(5), LocalDate.now());
 			Card cardMelba2 = new Card(melba, CardType.CREDIT,CardColor.TITANIUM,"4532-2326-6242-5632",454,LocalDate.now().plusYears(5), LocalDate.now());
 			Card cardClientYo = new Card(clientYo, CardType.CREDIT,CardColor.SILVER,"2344-5412-3643-4633",677,LocalDate.now().plusYears(5), LocalDate.now());
 			cardRepository.save(cardMelba);
