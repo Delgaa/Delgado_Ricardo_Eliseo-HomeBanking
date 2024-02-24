@@ -1,2 +1,4 @@
-package com.mindhub.homebanking.dtos;public class LoginDTO {
+package com.mindhub.homebanking.dtos;
+
+public record LoginDTO(String email, String password) {
 }
