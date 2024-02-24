@@ -7,6 +7,7 @@ import com.mindhub.homebanking.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -29,5 +30,13 @@ public class ClientController {
         Client client = clientRepository.findById(id).orElse(null);
 
         return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<?> getClient(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientRepository.findByEmail(email);
+
+        return ResponseEntity.ok(new ClientDTO(client));
     }
 }
