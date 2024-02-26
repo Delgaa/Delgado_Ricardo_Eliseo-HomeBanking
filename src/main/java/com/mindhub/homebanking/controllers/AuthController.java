@@ -51,6 +51,11 @@ public class AuthController {
                 return new ResponseEntity<>("Password has no content", HttpStatus.BAD_REQUEST);
             }
 
+
+            if (!passwordEncoder.matches(loginDTO.password(), clientRepository.findByEmail(loginDTO.email()).getPassword())){
+                return new ResponseEntity<>("Password incorrect", HttpStatus.BAD_REQUEST);
+            }
+
             authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())));
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.email());
             final  String jwt = jwtUtilService.generateToken(userDetails);
