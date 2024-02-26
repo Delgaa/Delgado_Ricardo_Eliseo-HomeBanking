@@ -26,7 +26,7 @@ public class JwtUtilService {
         return claimsResolver.apply(claims);
     }
 
-    public static String extractUsername(String token){
+    public String extractUsername(String token){
         return  extractClaim(token, Claims::getSubject);
     }
 
