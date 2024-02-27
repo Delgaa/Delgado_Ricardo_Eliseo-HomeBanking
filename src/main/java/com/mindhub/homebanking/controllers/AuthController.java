@@ -115,11 +115,12 @@ public class AuthController {
         clientRepository.save(newClient);
 
         GenerateRandomNum generateRandomNumAccount = new GenerateRandomNum();
-        String numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000);
 
-        if(accountRepository.findByNumber(numNewAccount) != null){
-            numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000);
-        }
+        String numNewAccount;
+
+        do{
+            numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,100000000);
+        }while (accountRepository.findByNumber(numNewAccount) != null);
 
         Account newAccount = new Account(numNewAccount , LocalDate.now(), 0.0);
         newClient.addAccount(newAccount);
