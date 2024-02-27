@@ -32,7 +32,7 @@ public class WebConfig {
                 )
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/auth/login", "/api/auth/register", "/h2-console/**").permitAll()
+                                .requestMatchers("/api/auth/login", "/api/auth/signup", "/h2-console/**").permitAll()
                                 .requestMatchers("/api/current/**").hasRole("CLIENT")
                                 .anyRequest().authenticated()
                 )
