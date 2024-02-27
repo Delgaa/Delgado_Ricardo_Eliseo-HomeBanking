@@ -62,7 +62,7 @@ public class AuthController {
 
 
             if (!passwordEncoder.matches(loginDTO.password(), clientRepository.findByEmail(loginDTO.email()).getPassword())){
-                return new ResponseEntity<>("Password incorrect", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Password incorrect", HttpStatus.UNAUTHORIZED);
             }
 
             authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())));
@@ -73,11 +73,11 @@ public class AuthController {
 
         }catch (Exception e){
 
-            return new ResponseEntity<>("Username y/o password incorrect", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Username y/o password incorrect", HttpStatus.UNAUTHORIZED);
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
 
         if (registerDTO.email().isBlank()){
@@ -89,7 +89,7 @@ public class AuthController {
         }
 
         if(clientRepository.findByEmail(registerDTO.email()) != null){
-            return new ResponseEntity<>("Email is already registered", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Email is already registered", HttpStatus.FORBIDDEN);
         }
 
         if (registerDTO.password().isBlank()){
