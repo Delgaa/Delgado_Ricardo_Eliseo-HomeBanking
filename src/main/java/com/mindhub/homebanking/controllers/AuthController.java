@@ -2,9 +2,12 @@ package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.LoginDTO;
 import com.mindhub.homebanking.dtos.RegisterDTO;
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
+import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.services.JwtUtilService;
+import com.mindhub.homebanking.utils.GenerateRandomNum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,6 +36,10 @@ public class AuthController {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -103,6 +112,18 @@ public class AuthController {
                                         registerDTO.lastName(),
                                         registerDTO.email(),
                                         passwordEncoder.encode(registerDTO.password()));
+        clientRepository.save(newClient);
+
+        GenerateRandomNum generateRandomNumAccount = new GenerateRandomNum();
+        String numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000);
+
+        if(accountRepository.findByNumber(numNewAccount) != null){
+            numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000);
+        }
+
+        Account newAccount = new Account(numNewAccount , LocalDate.now(), 0.0);
+        newClient.addAccount(newAccount);
+        accountRepository.save(newAccount);
         clientRepository.save(newClient);
 
         return new ResponseEntity<>("Successfully created", HttpStatus.CREATED);
