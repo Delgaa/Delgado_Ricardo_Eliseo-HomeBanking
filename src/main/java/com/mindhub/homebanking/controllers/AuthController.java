@@ -88,7 +88,7 @@ public class AuthController {
             return new ResponseEntity<>("Invalid email", HttpStatus.BAD_REQUEST);
         }
 
-        if(clientRepository.findByEmail(registerDTO.email()) != null){
+        if(clientRepository.existsClientByEmail(registerDTO.email())){
             return new ResponseEntity<>("Email is already registered", HttpStatus.FORBIDDEN);
         }
 
