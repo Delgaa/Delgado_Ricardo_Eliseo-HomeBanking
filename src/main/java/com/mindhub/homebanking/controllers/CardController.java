@@ -42,7 +42,7 @@ public class CardController {
     }
 
     @PostMapping("/")
-    private ResponseEntity<?> addCard(@RequestBody AddCardDTO addCardDTO){
+    public ResponseEntity<?> addCard(@RequestBody AddCardDTO addCardDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepository.findByEmail(email);
