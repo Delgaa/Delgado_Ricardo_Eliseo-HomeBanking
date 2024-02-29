@@ -1,7 +1,10 @@
 package com.mindhub.homebanking.controllers;
 
+import com.mindhub.homebanking.dtos.AddCardDTO;
 import com.mindhub.homebanking.dtos.CardDTO;
 import com.mindhub.homebanking.models.Card;
+import com.mindhub.homebanking.models.CardColor;
+import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
@@ -34,43 +37,37 @@ public class CardController {
 
         String cardHolder = client.getName() + " " + client.getLastName();
         List<Card> cards = cardRepository.findByCardHolder(cardHolder);
+
         return new ResponseEntity<>(cards.stream().map(CardDTO::new).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    private ResponseEntity<?> addCard(@RequestBody CardDTO cardDTO){
+    private ResponseEntity<?> addCard(@RequestBody AddCardDTO addCardDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepository.findByEmail(email);
 
-        Set<Card> cards = client.getCards();
-
-        Set<Boolean> existTypeColor = cards
-                                    .stream()
-                                    .map(card -> (card.getType() == cardDTO.getType() && card.getColor() == cardDTO.getColor()))
-                                    .collect(Collectors.toSet());
-
-        if (existTypeColor.contains(true)){
-            return new ResponseEntity<>("You already have a card of type " + cardDTO.getType().toString().toLowerCase() +" with the color " + cardDTO.getColor().toString().toLowerCase(), HttpStatus.FORBIDDEN);
+        if (addCardDTO.type().isBlank()){
+            return new ResponseEntity<>("Type no content", HttpStatus.BAD_REQUEST);
         }
 
-        /*Set<Card> cardDebit = cards.stream().filter(card -> Objects.equals(card.getType().toString(), "DEBIT")).collect(Collectors.toSet());
-
-        if (cardDebit.size() == 3){
-            return new ResponseEntity<>("The maximum number of debit cards allowed has been reached", HttpStatus.FORBIDDEN);
+        if (addCardDTO.color().isBlank()){
+            return new ResponseEntity<>("Color no content", HttpStatus.BAD_REQUEST);
         }
 
-        Set<Card> cardCredit = cards.stream().filter(card -> Objects.equals(card.getType().toString(), "CREDIT")).collect(Collectors.toSet());
+        if (cardRepository.existsCardByTypeAndColorAndClient(CardType.valueOf(addCardDTO.type()), CardColor.valueOf(addCardDTO.color()), client)){
+            return new ResponseEntity<>("You already have a card of type " + addCardDTO.type().toLowerCase() +" with the color " + addCardDTO.color().toLowerCase(), HttpStatus.FORBIDDEN);
+        }
 
-        if (cardCredit.size() == 3){
-            return new ResponseEntity<>("he maximum number of credit cards allowed has been reached", HttpStatus.FORBIDDEN);
-        }*/
+        if (cardRepository.countByTypeAndClient(CardType.valueOf(addCardDTO.type()), client) == 3){
+            return new ResponseEntity<>("The maximum number of" +addCardDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
+        }
 
         GenerateRandomNum generateRandomNumCard = new GenerateRandomNum();
 
         Card newCard = new Card(client,
-                cardDTO.getType(),
-                cardDTO.getColor(),
+                CardType.valueOf(addCardDTO.type()),
+                CardColor.valueOf(addCardDTO.color()),
                 generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000),
                 generateRandomNumCard.getRandomNumber(100,1000),
                 LocalDate.now().plusYears(5) ,
