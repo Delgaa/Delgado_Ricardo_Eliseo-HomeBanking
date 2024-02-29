@@ -44,7 +44,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    private ResponseEntity<?> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO){
 
         try{
 
