@@ -55,13 +55,14 @@ public class CardController {
             return new ResponseEntity<>("Color no content", HttpStatus.BAD_REQUEST);
         }
 
+        if (cardRepository.countByTypeAndClient(CardType.valueOf(addCardDTO.type()), client) == 3){
+            return new ResponseEntity<>("The maximum number of" +addCardDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
+        }
+
         if (cardRepository.existsCardByTypeAndColorAndClient(CardType.valueOf(addCardDTO.type()), CardColor.valueOf(addCardDTO.color()), client)){
             return new ResponseEntity<>("You already have a card of type " + addCardDTO.type().toLowerCase() +" with the color " + addCardDTO.color().toLowerCase(), HttpStatus.FORBIDDEN);
         }
 
-        if (cardRepository.countByTypeAndClient(CardType.valueOf(addCardDTO.type()), client) == 3){
-            return new ResponseEntity<>("The maximum number of" +addCardDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
-        }
 
         GenerateRandomNum generateRandomNumCard = new GenerateRandomNum();
 
