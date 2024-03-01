@@ -1,6 +1,6 @@
 package com.mindhub.homebanking.controllers;
 
-import com.mindhub.homebanking.dtos.AddCardDTO;
+import com.mindhub.homebanking.dtos.CardApplicationDTO;
 import com.mindhub.homebanking.dtos.CardDTO;
 import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardColor;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,33 +41,33 @@ public class CardController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addCard(@RequestBody AddCardDTO addCardDTO){
+    public ResponseEntity<?> addCard(@RequestBody CardApplicationDTO cardApplicationDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepository.findByEmail(email);
 
-        if (addCardDTO.type().isBlank()){
+        if (cardApplicationDTO.type().isBlank()){
             return new ResponseEntity<>("Type no content", HttpStatus.BAD_REQUEST);
         }
 
-        if (addCardDTO.color().isBlank()){
+        if (cardApplicationDTO.color().isBlank()){
             return new ResponseEntity<>("Color no content", HttpStatus.BAD_REQUEST);
         }
 
-        if (cardRepository.countByTypeAndClient(CardType.valueOf(addCardDTO.type()), client) == 3){
-            return new ResponseEntity<>("The maximum number of" +addCardDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
+        if (cardRepository.countByTypeAndClient(CardType.valueOf(cardApplicationDTO.type()), client) == 3){
+            return new ResponseEntity<>("The maximum number of" +cardApplicationDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
         }
 
-        if (cardRepository.existsCardByTypeAndColorAndClient(CardType.valueOf(addCardDTO.type()), CardColor.valueOf(addCardDTO.color()), client)){
-            return new ResponseEntity<>("You already have a card of type " + addCardDTO.type().toLowerCase() +" with the color " + addCardDTO.color().toLowerCase(), HttpStatus.FORBIDDEN);
+        if (cardRepository.existsCardByTypeAndColorAndClient(CardType.valueOf(cardApplicationDTO.type()), CardColor.valueOf(cardApplicationDTO.color()), client)){
+            return new ResponseEntity<>("You already have a card of type " + cardApplicationDTO.type().toLowerCase() +" with the color " + cardApplicationDTO.color().toLowerCase(), HttpStatus.FORBIDDEN);
         }
 
 
         GenerateRandomNum generateRandomNumCard = new GenerateRandomNum();
 
         Card newCard = new Card(client,
-                CardType.valueOf(addCardDTO.type()),
-                CardColor.valueOf(addCardDTO.color()),
+                CardType.valueOf(cardApplicationDTO.type()),
+                CardColor.valueOf(cardApplicationDTO.color()),
                 generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000),
                 generateRandomNumCard.getRandomNumber(100,1000),
                 LocalDate.now().plusYears(5) ,

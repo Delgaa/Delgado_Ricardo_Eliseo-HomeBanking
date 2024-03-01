@@ -1,6 +1,6 @@
 package com.mindhub.homebanking.controllers;
 
-import com.mindhub.homebanking.dtos.AddTransactionDTO;
+import com.mindhub.homebanking.dtos.TransactionApplicationDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
@@ -34,66 +34,66 @@ public class TransactionController {
 
     @Transactional
     @PostMapping("/")
-    public ResponseEntity<?> addTransaction(@RequestBody AddTransactionDTO addTransactionDTO){
+    public ResponseEntity<?> addTransaction(@RequestBody TransactionApplicationDTO transactionApplicationDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepository.findByEmail(email);
 
-        if (addTransactionDTO.numberOrigin().isBlank()){
+        if (transactionApplicationDTO.numberOrigin().isBlank()){
             return new ResponseEntity<>("Number account origin is empty",HttpStatus.FORBIDDEN);
         }
 
-        if (addTransactionDTO.numberDestination().isBlank()){
+        if (transactionApplicationDTO.numberDestination().isBlank()){
             return new ResponseEntity<>("Number account destination is empty",HttpStatus.FORBIDDEN);
         }
 
-        if (addTransactionDTO.detail().isBlank()){
+        if (transactionApplicationDTO.detail().isBlank()){
             return new ResponseEntity<>("Description is empty",HttpStatus.FORBIDDEN);
         }
 
-        if (addTransactionDTO.amount() == null){
+        if (transactionApplicationDTO.amount() == null){
             return new ResponseEntity<>("Amount is empty",HttpStatus.FORBIDDEN);
         }
 
-        if (addTransactionDTO.numberOrigin().equals(addTransactionDTO.numberDestination())){
+        if (transactionApplicationDTO.numberOrigin().equals(transactionApplicationDTO.numberDestination())){
             return new ResponseEntity<>("Account origin is equals account destination",HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumber(addTransactionDTO.numberOrigin())){
+        if (!accountRepository.existsAccountByNumber(transactionApplicationDTO.numberOrigin())){
             return new ResponseEntity<>("The account origin not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumberAndClient(addTransactionDTO.numberOrigin(), client)){
+        if (!accountRepository.existsAccountByNumberAndClient(transactionApplicationDTO.numberOrigin(), client)){
             return new ResponseEntity<>("The account origin not is your account", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumber(addTransactionDTO.numberDestination())){
+        if (!accountRepository.existsAccountByNumber(transactionApplicationDTO.numberDestination())){
             return new ResponseEntity<>("The account destination not exist", HttpStatus.FORBIDDEN);
         }
 
-        Account accountOrigin = accountRepository.findByNumber(addTransactionDTO.numberOrigin());
+        Account accountOrigin = accountRepository.findByNumber(transactionApplicationDTO.numberOrigin());
 
-        if(addTransactionDTO.amount() > accountOrigin.getBalance()){
+        if(transactionApplicationDTO.amount() > accountOrigin.getBalance()){
             return new ResponseEntity<>("The available balance is insufficient", HttpStatus.FORBIDDEN);
         }
 
         Transaction DebitTransaction = new Transaction(TransactionType.DEBIT,
-                addTransactionDTO.detail() + " to " + addTransactionDTO.numberDestination(),
+                transactionApplicationDTO.detail() + " to " + transactionApplicationDTO.numberDestination(),
                 LocalDateTime.now(),
-                -addTransactionDTO.amount());
+                -transactionApplicationDTO.amount());
 
-        accountOrigin.setBalance((accountOrigin.getBalance() - addTransactionDTO.amount()));
+        accountOrigin.setBalance((accountOrigin.getBalance() - transactionApplicationDTO.amount()));
         accountOrigin.addTransaction(DebitTransaction);
         transactionRepository.save(DebitTransaction);
         accountRepository.save(accountOrigin);
 
-        Account accountDestination = accountRepository.findByNumber(addTransactionDTO.numberDestination());
+        Account accountDestination = accountRepository.findByNumber(transactionApplicationDTO.numberDestination());
 
         Transaction CreditTransaction = new Transaction(TransactionType.CREDIT,
-                addTransactionDTO.detail() +" of "+ addTransactionDTO.numberOrigin(),
+                transactionApplicationDTO.detail() +" of "+ transactionApplicationDTO.numberOrigin(),
                 LocalDateTime.now(),
-                addTransactionDTO.amount());
-        accountDestination.setBalance((accountDestination.getBalance() + addTransactionDTO.amount()));
+                transactionApplicationDTO.amount());
+        accountDestination.setBalance((accountDestination.getBalance() + transactionApplicationDTO.amount()));
         accountDestination.addTransaction(CreditTransaction);
         transactionRepository.save(CreditTransaction);
         accountRepository.save(accountDestination );
