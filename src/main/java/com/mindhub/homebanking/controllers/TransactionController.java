@@ -43,6 +43,10 @@ public class TransactionController {
             return new ResponseEntity<>("Number account origin is empty",HttpStatus.FORBIDDEN);
         }
 
+        if (addTransactionDTO.numberDestination().isBlank()){
+            return new ResponseEntity<>("Number account destination is empty",HttpStatus.FORBIDDEN);
+        }
+
         if (addTransactionDTO.detail().isBlank()){
             return new ResponseEntity<>("Description is empty",HttpStatus.FORBIDDEN);
         }
@@ -63,7 +67,7 @@ public class TransactionController {
             return new ResponseEntity<>("The account origin not is your account", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumber(addTransactionDTO.numberOrigin())){
+        if (!accountRepository.existsAccountByNumber(addTransactionDTO.numberDestination())){
             return new ResponseEntity<>("The account destination not exist", HttpStatus.FORBIDDEN);
         }
 
