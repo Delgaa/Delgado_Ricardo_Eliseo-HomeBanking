@@ -10,9 +10,9 @@ public class ClientLoan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int amount;
+    private Double amount;
 
-    private int payments;
+    private Integer payments;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
@@ -22,7 +22,7 @@ public class ClientLoan {
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
-    public ClientLoan(int amount, int payments) {
+    public ClientLoan(Double amount, Integer payments) {
         this.amount = amount;
         this.payments = payments;
     }
@@ -34,11 +34,11 @@ public class ClientLoan {
         return id;
     }
 
-    public int getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
