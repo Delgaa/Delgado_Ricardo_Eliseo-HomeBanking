@@ -1,15 +1,19 @@
-package com.mindhub.homebanking.services;
+package com.mindhub.homebanking.services.implementsServices;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
-public class ClientServiceImpl implements ClientService{
+@Service
+public class ClientServiceImpl implements ClientService {
 
     @Autowired
     private ClientRepository clientRepository;
+
 
     @Override
     public List<Client> getAllClients() {
@@ -30,4 +34,15 @@ public class ClientServiceImpl implements ClientService{
     public Client getClientByEmail(String email) {
         return clientRepository.findByEmail(email);
     }
+
+    @Override
+    public void saveClient(Client client) {
+        clientRepository.save(client);
+    }
+
+    @Override
+    public Boolean clientExistsByEmail(String email) {
+        return clientRepository.existsClientByEmail(email);
+    }
+
 }
