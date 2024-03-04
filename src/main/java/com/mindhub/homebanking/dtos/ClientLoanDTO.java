@@ -10,9 +10,9 @@ public class ClientLoanDTO {
 
     private String name;
 
-    private int amount;
+    private Double amount;
 
-    private int payments;
+    private Integer payments;
 
     public ClientLoanDTO(ClientLoan clientLoan) {
         this.id = clientLoan.getId();
@@ -34,11 +34,11 @@ public class ClientLoanDTO {
         return name;
     }
 
-    public int getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public int getPayments() {
+    public Integer getPayments() {
         return payments;
     }
 }
