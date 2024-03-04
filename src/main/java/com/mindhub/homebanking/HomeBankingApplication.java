@@ -79,10 +79,10 @@ public class HomeBankingApplication {
 			loanRepository.save(personal);
 			loanRepository.save(automotive);
 
-			ClientLoan loan1 = new ClientLoan(400000,60);
-			ClientLoan loan2 = new ClientLoan(50000,12);
-			ClientLoan loan3 = new ClientLoan(100000,24);
-			ClientLoan loan4 = new ClientLoan(200000,36);
+			ClientLoan loan1 = new ClientLoan(400000.00,60);
+			ClientLoan loan2 = new ClientLoan(50000.0,12);
+			ClientLoan loan3 = new ClientLoan(100000.0,24);
+			ClientLoan loan4 = new ClientLoan(200000.0,36);
 			clientLoanRepository.save(loan1);
 			clientLoanRepository.save(loan2);
 			clientLoanRepository.save(loan3);
