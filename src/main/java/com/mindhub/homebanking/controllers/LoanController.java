@@ -4,17 +4,17 @@ import com.mindhub.homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static com.mindhub.homebanking.models.TransactionType.CREDIT;
 
 @RestController
@@ -25,10 +25,10 @@ public class LoanController {
     private LoanRepository loanRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
     private ClientLoanRepository clientLoanRepository;
@@ -48,7 +48,7 @@ public class LoanController {
     public ResponseEntity<Object> addLoan(@RequestBody LoanApplicationDTO loanApplicationDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
 
         if (loanApplicationDTO.name().isBlank()){
@@ -75,7 +75,7 @@ public class LoanController {
             return new ResponseEntity<>("Amount is greater than max amount", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumberAndClient(loanApplicationDTO.numberAccount(), client)){
+        if (!accountService.accountExistsByNumberAndClient(loanApplicationDTO.numberAccount(), client)){
             return new ResponseEntity<>("Number account already exists", HttpStatus.FORBIDDEN);
         }
 
@@ -90,15 +90,15 @@ public class LoanController {
         client.addClientLoan(newClientLoan);
 
         Transaction newTransaction = new Transaction(CREDIT,  loanApplicationDTO.name() +" loan approved", LocalDateTime.now(), loanApplicationDTO.amount());
-        Account account = accountRepository.findByNumber(loanApplicationDTO.numberAccount());
+        Account account = accountService.getAccountByNumber(loanApplicationDTO.numberAccount());
 
         account.addTransaction(newTransaction);
         account.setBalance(account.getBalance() + loanApplicationDTO.amount());
 
         clientLoanRepository.save(newClientLoan);
-        accountRepository.save(account);
+        accountService.saveAccount(account);
         loanRepository.save(newLoan);
-        clientRepository.save(client);
+        clientService.saveClient(client);
         transactionRepository.save(newTransaction);
 
         return new ResponseEntity<>("Created successfully",HttpStatus.CREATED);

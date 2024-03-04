@@ -1,9 +1,8 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
-import java.util.stream.Collectors;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +16,17 @@ import java.util.List;
 public class ClientController {
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
+
 
     @GetMapping("/")
     public ResponseEntity<List<ClientDTO>> getClients(){
-        List<Client> clients =clientRepository.findAll();
-        return new ResponseEntity<>(clients.stream().map(ClientDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(clientService.getAllClientsDTO(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientById(@PathVariable Long id){
-        Client client = clientRepository.findById(id).orElse(null);
+        Client client = clientService.getClientById(id);
 
         return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
     }
@@ -35,7 +34,7 @@ public class ClientController {
     @GetMapping("/current")
     public ResponseEntity<?> getClient(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         return ResponseEntity.ok(new ClientDTO(client));
     }

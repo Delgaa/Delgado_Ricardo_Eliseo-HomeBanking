@@ -4,16 +4,15 @@ import com.mindhub.homebanking.dtos.LoginDTO;
 import com.mindhub.homebanking.dtos.RegisterDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.securityServices.JwtUtilService;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import com.mindhub.homebanking.utils.GenerateRandomNum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,16 +28,16 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private ClientService clientService;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtUtilService jwtUtilService;
 
     @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -60,8 +59,11 @@ public class AuthController {
                 return new ResponseEntity<>("Password has no content", HttpStatus.BAD_REQUEST);
             }
 
+            if (!clientService.clientExistsByEmail(loginDTO.email())){
+                return new ResponseEntity<>("Email not registered", HttpStatus.UNAUTHORIZED);
+            }
 
-            if (!passwordEncoder.matches(loginDTO.password(), clientRepository.findByEmail(loginDTO.email()).getPassword())){
+            if (!passwordEncoder.matches(loginDTO.password(), clientService.getClientByEmail(loginDTO.email()).getPassword())){
                 return new ResponseEntity<>("Password incorrect", HttpStatus.UNAUTHORIZED);
             }
 
@@ -88,7 +90,7 @@ public class AuthController {
             return new ResponseEntity<>("Invalid email", HttpStatus.BAD_REQUEST);
         }
 
-        if(clientRepository.existsClientByEmail(registerDTO.email())){
+        if(clientService.clientExistsByEmail(registerDTO.email())){
             return new ResponseEntity<>("Email is already registered", HttpStatus.FORBIDDEN);
         }
 
@@ -112,7 +114,7 @@ public class AuthController {
                                         registerDTO.lastName(),
                                         registerDTO.email(),
                                         passwordEncoder.encode(registerDTO.password()));
-        clientRepository.save(newClient);
+
 
         GenerateRandomNum generateRandomNumAccount = new GenerateRandomNum();
 
@@ -120,19 +122,20 @@ public class AuthController {
 
         do{
             numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,100000000);
-        }while (accountRepository.findByNumber(numNewAccount) != null);
+        }while (accountService.getAccountByNumber(numNewAccount) != null);
 
         Account newAccount = new Account(numNewAccount , LocalDate.now(), 0.0);
         newClient.addAccount(newAccount);
-        accountRepository.save(newAccount);
-        clientRepository.save(newClient);
+        accountService.saveAccount(newAccount);
+
+        clientService.saveClient(newClient);
 
         return new ResponseEntity<>("Successfully created", HttpStatus.CREATED);
     }
 
-    @GetMapping("/test")
+    /*@GetMapping("/test")
     public  ResponseEntity<?> test(){
         String mail = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok("Hello " + mail);
-    }
+    }*/
 }

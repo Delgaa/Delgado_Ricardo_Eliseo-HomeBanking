@@ -8,6 +8,7 @@ import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.ClientService;
 import com.mindhub.homebanking.utils.GenerateRandomNum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,13 +27,13 @@ public class CardController {
     private CardRepository cardRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCards(){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         String cardHolder = client.getName() + " " + client.getLastName();
         List<Card> cards = cardRepository.findByCardHolder(cardHolder);
@@ -44,7 +45,7 @@ public class CardController {
     public ResponseEntity<?> addCard(@RequestBody CardApplicationDTO cardApplicationDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         if (cardApplicationDTO.type().isBlank()){
             return new ResponseEntity<>("Type no content", HttpStatus.BAD_REQUEST);
@@ -75,7 +76,7 @@ public class CardController {
 
         cardRepository.save(newCard);
         client.addCards(newCard);
-        clientRepository.save(client);
+        clientService.saveClient(client);
 
 
         return new ResponseEntity<>("Successfully created", HttpStatus.CREATED);

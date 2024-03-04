@@ -3,8 +3,8 @@ package com.mindhub.homebanking.controllers;
 import com.mindhub.homebanking.dtos.AccountDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import com.mindhub.homebanking.utils.GenerateRandomNum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,15 +21,15 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @GetMapping("/")
     public ResponseEntity<?> getAllAccounts(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         List<Account> accounts = client.getAccounts().stream().toList();
         return new ResponseEntity<>(accounts.stream().map(AccountDTO::new).collect(Collectors.toList()), HttpStatus.OK);
@@ -37,7 +37,7 @@ public class AccountController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAccount(@PathVariable Long id){
-        Account account = accountRepository.findById(id).orElse(null);
+        Account account = accountService.getAccountById(id);
         return account != null ? new ResponseEntity<>(new AccountDTO(account), HttpStatus.OK): ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
     }
 
@@ -45,7 +45,7 @@ public class AccountController {
     public ResponseEntity<?> addAccount(){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         if (client.getAccounts().size() == 3){
             return new ResponseEntity<>("The maximum of three accounts has already been reached.",HttpStatus.FORBIDDEN);
@@ -54,8 +54,8 @@ public class AccountController {
         GenerateRandomNum generateRandomNumAccount = new GenerateRandomNum();
         Account newAccount = new Account("VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000), LocalDate.now(), 0.0);
         client.addAccount(newAccount);
-        accountRepository.save(newAccount);
-        clientRepository.save(client);
+        accountService.saveAccount(newAccount);
+        clientService.saveClient(client);
 
         return new ResponseEntity<>("Successfully created", HttpStatus.CREATED);
     }
