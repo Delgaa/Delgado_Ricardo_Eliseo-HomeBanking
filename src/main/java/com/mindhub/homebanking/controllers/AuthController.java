@@ -123,21 +123,16 @@ public class AuthController {
         String numNewAccount;
 
         do{
-            numNewAccount = "VIN-" + generateRandomNumAccount.getRandomNumber(1,100000000);
-        }while (accountService.getAccountByNumber(numNewAccount) != null);
+            numNewAccount = generateRandomNumAccount.getRandomNumberAccount();
+        }while (accountService.accountExistsByNumber(numNewAccount));
 
         Account newAccount = new Account(numNewAccount , LocalDate.now(), 0.0);
-        newClient.addAccount(newAccount);
-        accountService.saveAccount(newAccount);
 
+        newClient.addAccount(newAccount);
         clientService.saveClient(newClient);
+        accountService.saveAccount(newAccount);
 
         return new ResponseEntity<>("Successfully created", HttpStatus.CREATED);
     }
 
-    /*@GetMapping("/test")
-    public  ResponseEntity<?> test(){
-        String mail = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok("Hello " + mail);
-    }*/
 }

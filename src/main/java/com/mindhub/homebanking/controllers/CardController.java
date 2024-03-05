@@ -63,8 +63,8 @@ public class CardController {
         Card newCard = new Card(client,
                 CardType.valueOf(cardApplicationDTO.type()),
                 CardColor.valueOf(cardApplicationDTO.color()),
-                generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000)+"-"+generateRandomNumCard.getRandomNumber(1000,10000),
-                generateRandomNumCard.getRandomNumber(100,1000),
+                generateRandomNumCard.getRandomNumberCard(),
+                generateRandomNumCard.getRandomNumberCVV(),
                 LocalDate.now().plusYears(5) ,
                 LocalDate.now());
 

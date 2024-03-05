@@ -49,7 +49,14 @@ public class AccountController {
         }
 
         GenerateRandomNum generateRandomNumAccount = new GenerateRandomNum();
-        Account newAccount = new Account("VIN-" + generateRandomNumAccount.getRandomNumber(1,1000000), LocalDate.now(), 0.0);
+
+        String numNewAccount;
+
+        do{
+            numNewAccount = generateRandomNumAccount.getRandomNumberAccount();
+        }while (accountService.accountExistsByNumber(numNewAccount));
+
+        Account newAccount = new Account(numNewAccount, LocalDate.now(), 0.0);
         client.addAccount(newAccount);
         accountService.saveAccount(newAccount);
         clientService.saveClient(client);
