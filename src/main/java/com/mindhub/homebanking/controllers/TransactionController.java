@@ -5,9 +5,9 @@ import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,20 +24,20 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Transactional
     @PostMapping("/")
     public ResponseEntity<?> addTransaction(@RequestBody TransactionApplicationDTO transactionApplicationDTO){
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(email);
+        Client client = clientService.getClientByEmail(email);
 
         if (transactionApplicationDTO.numberOrigin().isBlank()){
             return new ResponseEntity<>("Number account origin is empty",HttpStatus.FORBIDDEN);
@@ -59,19 +59,19 @@ public class TransactionController {
             return new ResponseEntity<>("Account origin is equals account destination",HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumber(transactionApplicationDTO.numberOrigin())){
+        if (!accountService.accountExistsByNumber(transactionApplicationDTO.numberOrigin())){
             return new ResponseEntity<>("The account origin not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumberAndClient(transactionApplicationDTO.numberOrigin(), client)){
+        if (!accountService.accountExistsByNumberAndClient(transactionApplicationDTO.numberOrigin(), client)){
             return new ResponseEntity<>("The account origin not is your account", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsAccountByNumber(transactionApplicationDTO.numberDestination())){
+        if (!accountService.accountExistsByNumber(transactionApplicationDTO.numberDestination())){
             return new ResponseEntity<>("The account destination not exist", HttpStatus.FORBIDDEN);
         }
 
-        Account accountOrigin = accountRepository.findByNumber(transactionApplicationDTO.numberOrigin());
+        Account accountOrigin = accountService.getAccountByNumber(transactionApplicationDTO.numberOrigin());
 
         if(transactionApplicationDTO.amount() > accountOrigin.getBalance()){
             return new ResponseEntity<>("The available balance is insufficient", HttpStatus.FORBIDDEN);
@@ -84,19 +84,20 @@ public class TransactionController {
 
         accountOrigin.setBalance((accountOrigin.getBalance() - transactionApplicationDTO.amount()));
         accountOrigin.addTransaction(DebitTransaction);
-        transactionRepository.save(DebitTransaction);
-        accountRepository.save(accountOrigin);
+        transactionService.saveTransaction(DebitTransaction);
+        accountService.saveAccount(accountOrigin);
 
-        Account accountDestination = accountRepository.findByNumber(transactionApplicationDTO.numberDestination());
+        Account accountDestination = accountService.getAccountByNumber(transactionApplicationDTO.numberDestination());
 
         Transaction CreditTransaction = new Transaction(TransactionType.CREDIT,
                 transactionApplicationDTO.detail() +" of "+ transactionApplicationDTO.numberOrigin(),
                 LocalDateTime.now(),
                 transactionApplicationDTO.amount());
+
         accountDestination.setBalance((accountDestination.getBalance() + transactionApplicationDTO.amount()));
         accountDestination.addTransaction(CreditTransaction);
-        transactionRepository.save(CreditTransaction);
-        accountRepository.save(accountDestination );
+        transactionService.saveTransaction(CreditTransaction);
+        accountService.saveAccount(accountDestination );
 
         return new ResponseEntity<>("Transaction completed successfully", HttpStatus.CREATED);
     }

@@ -31,8 +31,7 @@ public class AccountController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientService.getClientByEmail(email);
 
-        List<Account> accounts = client.getAccounts().stream().toList();
-        return new ResponseEntity<>(accounts.stream().map(AccountDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(accountService.getAccountsDTO(client), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

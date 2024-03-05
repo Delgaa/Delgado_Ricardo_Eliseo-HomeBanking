@@ -17,8 +17,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
+
+import static org.springframework.web.client.HttpClientErrorException.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -43,7 +46,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) throws Forbidden {
 
         try{
 
@@ -73,8 +76,7 @@ public class AuthController {
 
             return  ResponseEntity.ok(jwt);
 
-        }catch (Exception e){
-
+        }catch (HttpClientErrorException e){
             return new ResponseEntity<>("Username y/o password incorrect", HttpStatus.UNAUTHORIZED);
         }
     }

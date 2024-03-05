@@ -6,8 +6,7 @@ import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardColor;
 import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.repositories.CardRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
+import com.mindhub.homebanking.services.CardService;
 import com.mindhub.homebanking.services.ClientService;
 import com.mindhub.homebanking.utils.GenerateRandomNum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 public class CardController {
 
     @Autowired
-    private CardRepository cardRepository;
+    private CardService cardService;
 
     @Autowired
     private ClientService clientService;
@@ -35,10 +34,7 @@ public class CardController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientService.getClientByEmail(email);
 
-        String cardHolder = client.getName() + " " + client.getLastName();
-        List<Card> cards = cardRepository.findByCardHolder(cardHolder);
-
-        return new ResponseEntity<>(cards.stream().map(CardDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(cardService.getCardsDTO(client.getName() + " " + client.getLastName()), HttpStatus.OK);
     }
 
     @PostMapping("/")
@@ -55,11 +51,11 @@ public class CardController {
             return new ResponseEntity<>("Color no content", HttpStatus.BAD_REQUEST);
         }
 
-        if (cardRepository.countByTypeAndClient(CardType.valueOf(cardApplicationDTO.type()), client) == 3){
+        if (cardService.countCardsByTypeAndClient(cardApplicationDTO.type(), client) == 3){
             return new ResponseEntity<>("The maximum number of" +cardApplicationDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
         }
 
-        if (cardRepository.existsCardByTypeAndColorAndClient(CardType.valueOf(cardApplicationDTO.type()), CardColor.valueOf(cardApplicationDTO.color()), client)){
+        if (cardService.CardExistsByTypeAndColorAndClient(cardApplicationDTO.type(), cardApplicationDTO.color(), client)){
             return new ResponseEntity<>("You already have a card of type " + cardApplicationDTO.type().toLowerCase() +" with the color " + cardApplicationDTO.color().toLowerCase(), HttpStatus.FORBIDDEN);
         }
 
@@ -74,7 +70,7 @@ public class CardController {
                 LocalDate.now().plusYears(5) ,
                 LocalDate.now());
 
-        cardRepository.save(newCard);
+        cardService.saveCard(newCard);
         client.addCards(newCard);
         clientService.saveClient(client);
 
