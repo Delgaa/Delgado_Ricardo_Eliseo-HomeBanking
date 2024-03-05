@@ -3,7 +3,6 @@ package com.mindhub.homebanking.controllers;
 import com.mindhub.homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
-import com.mindhub.homebanking.repositories.*;
 import com.mindhub.homebanking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import static com.mindhub.homebanking.models.TransactionType.CREDIT;
 
 @RestController
@@ -80,6 +78,10 @@ public class LoanController {
 
         if (!loanService.isLoanAvailableByNameAndPayment(loanApplicationDTO.name(), loanApplicationDTO.payments())){
             return new ResponseEntity<>("Loan already exists", HttpStatus.FORBIDDEN);
+        }
+
+        if (clientLoanService.isLoanAvailableByLoanAndClient(loanService.getLoanByName(loanApplicationDTO.name()), client)){
+            return new ResponseEntity<>("Previously obtained loan", HttpStatus.FORBIDDEN);
         }
 
         ClientLoan newClientLoan = new ClientLoan(loanApplicationDTO.amount() + loanApplicationDTO.amount()* 0.2, loanApplicationDTO.payments());
