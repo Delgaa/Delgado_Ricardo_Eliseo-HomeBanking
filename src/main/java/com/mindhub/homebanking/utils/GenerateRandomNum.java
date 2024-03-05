@@ -6,7 +6,7 @@ public class GenerateRandomNum {
     }
 
     public String getRandomNumberCard() {
-        return getRandomNumber(1000,10000) + " " + getRandomNumber(1000,10000) + " " + getRandomNumber(1000,10000) + " " + getRandomNumber(1000,10000);
+        return getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000);
     }
 
     public int getRandomNumberCVV() {
