@@ -12,12 +12,12 @@ public class GenerateRandomNum {
     public String getRandomNumberCVV() {
         int random = getRandomNumber(1,1000);
 
-        if (random > 100){
-            return "VIN-0" + random;
+        if (random < 10){
+            return "00" + random;
         }
 
-        if (random > 10){
-            return "VIN-00" + random;
+        if (random < 100){
+            return "0" + random;
         }
 
         return String.valueOf(random);
@@ -26,32 +26,32 @@ public class GenerateRandomNum {
     public String getRandomNumberAccount() {
         int random = getRandomNumber(1,100000000);
 
-        if (random > 10000000){
-            return "VIN-0" + random;
+        if (random < 10){
+            return "VIN-0000000" + random;
         }
 
-        if (random > 1000000){
-            return "VIN-00" + random;
-        }
-
-        if (random > 100000){
-            return "VIN-000" + random;
-        }
-
-        if (random > 10000){
-            return "VIN-0000" + random;
-        }
-
-        if (random > 1000){
-            return "VIN-00000" + random;
-        }
-
-        if (random > 100){
+        if (random < 100){
             return "VIN-000000" + random;
         }
 
-        if (random > 10){
-            return "VIN-0000000" + random;
+        if (random < 1000){
+            return "VIN-00000" + random;
+        }
+
+        if (random < 10000){
+            return "VIN-0000" + random;
+        }
+
+        if (random < 100000){
+            return "VIN-000" + random;
+        }
+
+        if (random < 1000000){
+            return "VIN-00" + random;
+        }
+
+        if (random < 10000000){
+            return "VIN-0" + random;
         }
 
         return "VIN-" + random;
