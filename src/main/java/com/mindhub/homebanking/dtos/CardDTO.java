@@ -17,7 +17,7 @@ public class CardDTO {
 
     private String number;
 
-    private int cvv;
+    private String cvv;
 
     private LocalDate fromDate;
 
@@ -57,7 +57,7 @@ public class CardDTO {
         return number;
     }
 
-    public int getCvv() {
+    public String getCvv() {
         return cvv;
     }
 

@@ -9,11 +9,51 @@ public class GenerateRandomNum {
         return getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000) + "-" + getRandomNumber(1000,10000);
     }
 
-    public int getRandomNumberCVV() {
-        return getRandomNumber(100,1000);
+    public String getRandomNumberCVV() {
+        int random = getRandomNumber(1,1000);
+
+        if (random > 100){
+            return "VIN-0" + random;
+        }
+
+        if (random > 10){
+            return "VIN-00" + random;
+        }
+
+        return String.valueOf(random);
     }
 
     public String getRandomNumberAccount() {
-        return "VIN-" + getRandomNumber(1,1000000);
+        int random = getRandomNumber(1,100000000);
+
+        if (random > 10000000){
+            return "VIN-0" + random;
+        }
+
+        if (random > 1000000){
+            return "VIN-00" + random;
+        }
+
+        if (random > 100000){
+            return "VIN-000" + random;
+        }
+
+        if (random > 10000){
+            return "VIN-0000" + random;
+        }
+
+        if (random > 1000){
+            return "VIN-00000" + random;
+        }
+
+        if (random > 100){
+            return "VIN-000000" + random;
+        }
+
+        if (random > 10){
+            return "VIN-0000000" + random;
+        }
+
+        return "VIN-" + random;
     }
 }
