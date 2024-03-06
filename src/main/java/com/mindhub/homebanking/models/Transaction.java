@@ -12,7 +12,7 @@ public class Transaction {
 
     private TransactionType type;
 
-    private String detail;
+    private String description;
 
     private LocalDateTime date;
 
@@ -22,9 +22,9 @@ public class Transaction {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    public Transaction(TransactionType type, String detail, LocalDateTime transactionTime, Double amount) {
+    public Transaction(TransactionType type, String description, LocalDateTime transactionTime, Double amount) {
         this.type = type;
-        this.detail = detail;
+        this.description = description;
         this.date = transactionTime;
         this.amount = amount;
     }
@@ -44,12 +44,12 @@ public class Transaction {
         this.type = type;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDetail(String details) {
-        this.detail = details;
+    public void setDescription(String details) {
+        this.description = details;
     }
 
     public LocalDateTime getDate() {
@@ -81,7 +81,7 @@ public class Transaction {
         return "Transaction{" +
                 "id=" + id +
                 ", type=" + type +
-                ", detail='" + detail + '\'' +
+                ", detail='" + description + '\'' +
                 ", transactionTime=" + date +
                 ", amount=" + amount +
                 '}';
