@@ -1,12 +1,11 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
-import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.ClientVerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -18,6 +17,9 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private ClientVerificationService clientVerificationService;
+
 
     @GetMapping("/")
     public ResponseEntity<List<ClientDTO>> getClients(){
@@ -26,16 +28,11 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientById(@PathVariable Long id){
-        Client client = clientService.getClientById(id);
-
-        return client != null ? new ResponseEntity<>(new ClientDTO(client), HttpStatus.OK) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
+        return clientVerificationService.verifyClientId(id);
     }
 
     @GetMapping("/current")
     public ResponseEntity<?> getClient(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientService.getClientByEmail(email);
-
-        return ResponseEntity.ok(new ClientDTO(client));
+        return clientVerificationService.verifyClientAccess();
     }
 }
