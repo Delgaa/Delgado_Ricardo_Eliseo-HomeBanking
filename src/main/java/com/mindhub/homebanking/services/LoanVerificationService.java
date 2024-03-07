@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import static com.mindhub.homebanking.models.TransactionType.CREDIT;
 
@@ -29,9 +28,6 @@ public class LoanVerificationService {
 
     @Autowired
     private TransactionService transactionService;
-
-    @Autowired
-    private CardService cardService;
 
     @Transactional
     public ResponseEntity<?> verifyLoanApplication(LoanApplicationDTO loanApplicationDTO) {
