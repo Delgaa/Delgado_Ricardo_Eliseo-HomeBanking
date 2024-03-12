@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/clients/current/accounts")
 public class AccountController {
 
