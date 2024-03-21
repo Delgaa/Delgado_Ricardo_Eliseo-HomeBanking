@@ -40,34 +40,42 @@ public class AuthVerificationService {
 
     public ResponseEntity<?> verifyLogin(LoginDTO loginDTO){
 
-    if (loginDTO.email().isBlank()){
-        return new  ResponseEntity<>("Email has no content", HttpStatus.BAD_REQUEST);
-    }
+        if (loginDTO.email().isBlank()){
+            return new  ResponseEntity<>("Email has no content", HttpStatus.BAD_REQUEST);
+        }
 
-            if (!loginDTO.email().contains("@")){
-        return new ResponseEntity<>("Invalid email", HttpStatus.BAD_REQUEST);
-    }
+        if (!loginDTO.email().contains("@")){
+            return new ResponseEntity<>("Invalid email", HttpStatus.BAD_REQUEST);
+        }
 
-            if (loginDTO.password().isBlank()){
-        return new ResponseEntity<>("Password has no content", HttpStatus.BAD_REQUEST);
-    }
+        if (loginDTO.password().isBlank()){
+            return new ResponseEntity<>("Password has no content", HttpStatus.BAD_REQUEST);
+        }
 
-            if (!clientService.clientExistsByEmail(loginDTO.email())){
-        return new ResponseEntity<>("Email not registered", HttpStatus.UNAUTHORIZED);
-    }
+        if (!clientService.clientExistsByEmail(loginDTO.email())){
+            return new ResponseEntity<>("Email not registered", HttpStatus.UNAUTHORIZED);
+        }
 
-            if (!passwordEncoder.matches(loginDTO.password(), clientService.getClientByEmail(loginDTO.email()).getPassword())){
-        return new ResponseEntity<>("Password incorrect", HttpStatus.UNAUTHORIZED);
-    }
+        if (!passwordEncoder.matches(loginDTO.password(), clientService.getClientByEmail(loginDTO.email()).getPassword())){
+            return new ResponseEntity<>("Password incorrect", HttpStatus.UNAUTHORIZED);
+        }
 
-            authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())));
-    final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.email());
-    final  String jwt = jwtUtilService.generateToken(userDetails);
+        authenticationManager.authenticate((new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password())));
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.email());
+        final  String jwt = jwtUtilService.generateToken(userDetails);
 
         return  ResponseEntity.ok(jwt);
     }
 
     public ResponseEntity<?> verifyRegistration(RegisterDTO registerDTO){
+
+        if (registerDTO.name().isBlank()){
+            return new ResponseEntity<>("Name has no content", HttpStatus.BAD_REQUEST);
+        }
+
+        if (registerDTO.lastName().isBlank()){
+            return new ResponseEntity<>("Lastname has no content", HttpStatus.BAD_REQUEST);
+        }
 
         if (registerDTO.email().isBlank()){
             return new ResponseEntity<>("Email has no content", HttpStatus.BAD_REQUEST);
@@ -87,14 +95,6 @@ public class AuthVerificationService {
 
         if (registerDTO.password().length() < 8){
             return new ResponseEntity<>("Enter a password longer than 8 digits", HttpStatus.BAD_REQUEST);
-        }
-
-        if (registerDTO.name().isBlank()){
-            return new ResponseEntity<>("Name has no content", HttpStatus.BAD_REQUEST);
-        }
-
-        if (registerDTO.lastName().isBlank()){
-            return new ResponseEntity<>("Lastname has no content", HttpStatus.BAD_REQUEST);
         }
 
         Client newClient = new Client(registerDTO.name(),

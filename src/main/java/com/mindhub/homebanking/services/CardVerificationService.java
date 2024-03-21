@@ -44,6 +44,8 @@ public class CardVerificationService {
             return new ResponseEntity<>("Color no content", HttpStatus.BAD_REQUEST);
         }
 
+
+
         if (cardService.countCardsByTypeAndClient(cardApplicationDTO.type(), client) == 3){
             return new ResponseEntity<>("The maximum number of" +cardApplicationDTO.type().toLowerCase()+ "cards allowed has been reached", HttpStatus.FORBIDDEN);
         }

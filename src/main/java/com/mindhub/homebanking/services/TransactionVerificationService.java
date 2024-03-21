@@ -39,12 +39,12 @@ public class TransactionVerificationService {
             return new ResponseEntity<>("Number account destination is empty",HttpStatus.FORBIDDEN);
         }
 
-        if (transactionApplicationDTO.detail().isBlank()){
-            return new ResponseEntity<>("Description is empty",HttpStatus.FORBIDDEN);
-        }
-
         if (transactionApplicationDTO.amount() == null){
             return new ResponseEntity<>("Amount is empty",HttpStatus.FORBIDDEN);
+        }
+
+        if (transactionApplicationDTO.detail().isBlank()){
+            return new ResponseEntity<>("Description is empty",HttpStatus.FORBIDDEN);
         }
 
         if (transactionApplicationDTO.numberOrigin().equals(transactionApplicationDTO.numberDestination())){

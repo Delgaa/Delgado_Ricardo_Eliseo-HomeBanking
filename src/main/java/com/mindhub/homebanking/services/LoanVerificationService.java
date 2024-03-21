@@ -39,6 +39,14 @@ public class LoanVerificationService {
             return new ResponseEntity<>("Name is empty", HttpStatus.FORBIDDEN);
         }
 
+        if (loanApplicationDTO.numberAccount().isBlank()){
+            return new ResponseEntity<>("Number account is empty", HttpStatus.FORBIDDEN);
+        }
+
+        if (!accountService.accountExistsByNumberAndClient(loanApplicationDTO.numberAccount(), client)){
+            return new ResponseEntity<>("Number account already exists", HttpStatus.FORBIDDEN);
+        }
+
         if (loanApplicationDTO.amount() == null || loanApplicationDTO.amount() <= 0){
             return new ResponseEntity<>("Amount is empty", HttpStatus.FORBIDDEN);
         }
@@ -47,9 +55,6 @@ public class LoanVerificationService {
             return new ResponseEntity<>("Payments is empty", HttpStatus.FORBIDDEN);
         }
 
-        if (loanApplicationDTO.numberAccount().isBlank()){
-            return new ResponseEntity<>("Number account is empty", HttpStatus.FORBIDDEN);
-        }
 
         if (!loanService.isLoanAvailable(loanApplicationDTO.name())){
             return new ResponseEntity<>("Loan already exists", HttpStatus.FORBIDDEN);
@@ -59,9 +64,6 @@ public class LoanVerificationService {
             return new ResponseEntity<>("Amount is greater than max amount", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountService.accountExistsByNumberAndClient(loanApplicationDTO.numberAccount(), client)){
-            return new ResponseEntity<>("Number account already exists", HttpStatus.FORBIDDEN);
-        }
 
         if (!loanService.isLoanAvailableByNameAndPayment(loanApplicationDTO.name(), loanApplicationDTO.payments())){
             return new ResponseEntity<>("Loan already exists", HttpStatus.FORBIDDEN);
