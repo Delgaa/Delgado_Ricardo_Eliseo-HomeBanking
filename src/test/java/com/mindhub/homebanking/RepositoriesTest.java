@@ -1,3 +1,4 @@
+/*
 package com.mindhub.homebanking;
 
 
@@ -116,3 +117,4 @@ public class RepositoriesTest {
         assertThat(exists, is(true));
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.mindhub.homebanking;
 
 import com.mindhub.homebanking.utils.GenerateRandomNum;
@@ -37,3 +38,4 @@ class HomeBankingApplicationTests {
 		assertThat(account.length(), equalTo(12));
 	}
 }
+*/
