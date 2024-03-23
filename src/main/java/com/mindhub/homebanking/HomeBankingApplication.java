@@ -23,11 +23,11 @@ public class HomeBankingApplication {
 		SpringApplication.run(HomeBankingApplication.class, args);
 	}
 
-	/*@Bean
+	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return args -> {
 
-			Client melba = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("melba123"));
+			/*Client melba = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("melba123"));
 			clientRepository.save(melba);
 
 			Account accountMelba1 = new Account("VIN001", LocalDate.now(), 5000.00);
@@ -70,7 +70,7 @@ public class HomeBankingApplication {
 			accountYo2.addTransaction(refund);
 			transactionRepository.save(refund);
 
-			clientRepository.save(clientYo);
+			clientRepository.save(clientYo);*/
 
 			Loan mortgage = new Loan("Mortgage", 500000, List.of(12,24,36,48,60));
 			Loan personal = new Loan("Personal", 100000, List.of(6, 12, 24));
@@ -79,7 +79,7 @@ public class HomeBankingApplication {
 			loanRepository.save(personal);
 			loanRepository.save(automotive);
 
-			ClientLoan loan1 = new ClientLoan(400000.00,60);
+			/*ClientLoan loan1 = new ClientLoan(400000.00,60);
 			ClientLoan loan2 = new ClientLoan(50000.0,12);
 			ClientLoan loan3 = new ClientLoan(100000.0,24);
 			ClientLoan loan4 = new ClientLoan(200000.0,36);
@@ -125,8 +125,8 @@ public class HomeBankingApplication {
 
 			cardRepository.save(cardMelba);
 			cardRepository.save(cardMelba2);
-			cardRepository.save(cardClientYo);
+			cardRepository.save(cardClientYo);*/
 
 		};
-	}*/
+	}
 }
