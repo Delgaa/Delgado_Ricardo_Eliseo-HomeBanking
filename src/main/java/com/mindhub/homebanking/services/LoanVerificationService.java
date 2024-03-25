@@ -57,7 +57,7 @@ public class LoanVerificationService {
 
 
         if (!loanService.isLoanAvailable(loanApplicationDTO.name())){
-            return new ResponseEntity<>("Loan already exists", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Loan not exists", HttpStatus.FORBIDDEN);
         }
 
         if (loanApplicationDTO.amount() > loanService.getLoanByName(loanApplicationDTO.name()).getMaxAmount()){
@@ -66,7 +66,7 @@ public class LoanVerificationService {
 
 
         if (!loanService.isLoanAvailableByNameAndPayment(loanApplicationDTO.name(), loanApplicationDTO.payments())){
-            return new ResponseEntity<>("Loan already exists", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Loan not exists", HttpStatus.FORBIDDEN);
         }
 
         if (clientLoanService.isLoanAvailableByLoanAndClient(loanService.getLoanByName(loanApplicationDTO.name()), client)){
